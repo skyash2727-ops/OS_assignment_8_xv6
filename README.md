@@ -1,4 +1,4 @@
-# OS_assignment_7_xv6
+# OS_assignment_8_xv6
 
 This repository contains the implementation details, design decisions, memory usage metrics, and testing reports for xv6 memory management extensions (Questions 1 through 8).
 
