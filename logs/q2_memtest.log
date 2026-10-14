@@ -1,0 +1,57 @@
+init: starting sh
+$ memtest
+==== Q2: memtest ====
+[1. start]
+   total_pages=57066 free_pages=56790 user_pages=3 resident=3
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+[2a. after sbrk(64 pages) + touching them]
+   total_pages=57066 free_pages=56726 user_pages=67 resident=67
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages dropped by 64 (64 data pages; the existing page table already covers them)
+[2b. after malloc(40 pages) + touching them]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages dropped by 41
+[3. just before fork()]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+[3. parent, child still alive]
+   total_pages=57066 free_pages=56510 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> fork() consumed 175 pages (copy of user pages + page tables + pgdir + kernel stack)
+[4. after child exited and was reaped by wait()]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages restored: before fork=56685 after wait=56685 : NO LEAK (PASS)
+[5. after 20 more fork()/wait() cycles]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> NO LEAK after 20 cycles (PASS)
+$ memtest
+==== Q2: memtest ====
+[1. start]
+   total_pages=57066 free_pages=56790 user_pages=3 resident=3
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+[2a. after sbrk(64 pages) + touching them]
+   total_pages=57066 free_pages=56726 user_pages=67 resident=67
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages dropped by 64 (64 data pages; the existing page table already covers them)
+[2b. after malloc(40 pages) + touching them]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages dropped by 41
+[3. just before fork()]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+[3. parent, child still alive]
+   total_pages=57066 free_pages=56510 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> fork() consumed 175 pages (copy of user pages + page tables + pgdir + kernel stack)
+[4. after child exited and was reaped by wait()]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> free pages restored: before fork=56685 after wait=56685 : NO LEAK (PASS)
+[5. after 20 more fork()/wait() cycles]
+   total_pages=57066 free_pages=56685 user_pages=108 resident=108
+   pt_pages=66 (user_pt=1 kernel_pt=64, +1 page directory)
+   -> NO LEAK after 20 cycles (PASS)

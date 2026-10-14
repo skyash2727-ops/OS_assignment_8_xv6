@@ -1,0 +1,115 @@
+init: starting sh
+$ usertests
+usertests starting
+arg test passed
+createdelete test
+createdelete ok
+linkunlink test
+linkunlink ok
+concreate test
+concreate ok
+fourfiles test
+fourfiles ok
+sharedfd test
+sharedfd ok
+bigarg test
+bigarg test ok
+bigwrite test
+bigwrite ok
+bigarg test
+bigarg test ok
+bss test
+bss test ok
+sbrk test
+pid 97 usertests: segfault at 0x80000000 eip 0x3059: kernel address -- kill proc
+pid 98 usertests: segfault at 0x8000c350 eip 0x3059: kernel address -- kill proc
+pid 99 usertests: segfault at 0x800186a0 eip 0x3059: kernel address -- kill proc
+pid 100 usertests: segfault at 0x800249f0 eip 0x3059: kernel address -- kill proc
+pid 101 usertests: segfault at 0x80030d40 eip 0x3059: kernel address -- kill proc
+pid 102 usertests: segfault at 0x8003d090 eip 0x3059: kernel address -- kill proc
+pid 103 usertests: segfault at 0x800493e0 eip 0x3059: kernel address -- kill proc
+pid 104 usertests: segfault at 0x80055730 eip 0x3059: kernel address -- kill proc
+pid 105 usertests: segfault at 0x80061a80 eip 0x3059: kernel address -- kill proc
+pid 106 usertests: segfault at 0x8006ddd0 eip 0x3059: kernel address -- kill proc
+pid 107 usertests: segfault at 0x8007a120 eip 0x3059: kernel address -- kill proc
+pid 108 usertests: segfault at 0x80086470 eip 0x3059: kernel address -- kill proc
+pid 109 usertests: segfault at 0x800927c0 eip 0x3059: kernel address -- kill proc
+pid 110 usertests: segfault at 0x8009eb10 eip 0x3059: kernel address -- kill proc
+pid 111 usertests: segfault at 0x800aae60 eip 0x3059: kernel address -- kill proc
+pid 112 usertests: segfault at 0x800b71b0 eip 0x3059: kernel address -- kill proc
+pid 113 usertests: segfault at 0x800c3500 eip 0x3059: kernel address -- kill proc
+pid 114 usertests: segfault at 0x800cf850 eip 0x3059: kernel address -- kill proc
+pid 115 usertests: segfault at 0x800dbba0 eip 0x3059: kernel address -- kill proc
+pid 116 usertests: segfault at 0x800e7ef0 eip 0x3059: kernel address -- kill proc
+pid 117 usertests: segfault at 0x800f4240 eip 0x3059: kernel address -- kill proc
+pid 118 usertests: segfault at 0x80100590 eip 0x3059: kernel address -- kill proc
+pid 119 usertests: segfault at 0x8010c8e0 eip 0x3059: kernel address -- kill proc
+pid 120 usertests: segfault at 0x80118c30 eip 0x3059: kernel address -- kill proc
+pid 121 usertests: segfault at 0x80124f80 eip 0x3059: kernel address -- kill proc
+pid 122 usertests: segfault at 0x801312d0 eip 0x3059: kernel address -- kill proc
+pid 123 usertests: segfault at 0x8013d620 eip 0x3059: kernel address -- kill proc
+pid 124 usertests: segfault at 0x80149970 eip 0x3059: kernel address -- kill proc
+pid 125 usertests: segfault at 0x80155cc0 eip 0x3059: kernel address -- kill proc
+pid 126 usertests: segfault at 0x80162010 eip 0x3059: kernel address -- kill proc
+pid 127 usertests: segfault at 0x8016e360 eip 0x3059: kernel address -- kill proc
+pid 128 usertests: segfault at 0x8017a6b0 eip 0x3059: kernel address -- kill proc
+pid 129 usertests: segfault at 0x80186a00 eip 0x3059: kernel address -- kill proc
+pid 130 usertests: segfault at 0x80192d50 eip 0x3059: kernel address -- kill proc
+pid 131 usertests: segfault at 0x8019f0a0 eip 0x3059: kernel address -- kill proc
+pid 132 usertests: segfault at 0x801ab3f0 eip 0x3059: kernel address -- kill proc
+pid 133 usertests: segfault at 0x801b7740 eip 0x3059: kernel address -- kill proc
+pid 134 usertests: segfault at 0x801c3a90 eip 0x3059: kernel address -- kill proc
+pid 135 usertests: segfault at 0x801cfde0 eip 0x3059: kernel address -- kill proc
+pid 136 usertests: segfault at 0x801dc130 eip 0x3059: kernel address -- kill proc
+sbrk test OK
+validate test
+validate ok
+open test
+open test ok
+small file test
+creat small succeeded; ok
+writes ok
+open small succeeded ok
+read succeeded ok
+small file test ok
+big files test
+big files ok
+many creates, followed by unlink test
+many creates, followed by unlink; ok
+openiput test
+openiput test ok
+exitiput test
+exitiput test ok
+iput test
+iput test ok
+mem test
+pid 425 usertests: lazy alloc out of memory at 0x24d1d004 -- kill proc
+pipe1 ok
+preempt: kill... wait... preempt ok
+exitwait ok
+rmdot test
+rmdot ok
+fourteen test
+fourteen ok
+bigfile test
+bigfile test ok
+subdir test
+subdir ok
+linktest
+linktest ok
+unlinkread test
+unlinkread ok
+dir vs file
+dir vs file OK
+empty file name
+empty file name OK
+fork test
+fork test OK
+bigdir test
+bigdir ok
+uio test
+pid 591 usertests: trap 13 err 0 on cpu 0 eip 0x35d3 addr 0x24d1d004--kill proc
+uio test done
+exec test
+ALL TESTS PASSED
+$ qemu-system-i386: terminating on signal 15 from pid 326 (timeout)

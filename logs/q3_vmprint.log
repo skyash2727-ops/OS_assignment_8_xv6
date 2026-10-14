@@ -1,0 +1,47 @@
+init: starting sh
+$ vmprinttest
+
+######## 1. at start-up ########
+vmprint: pid 3 (vmprinttest)  pgdir_pa=0x0df23000  sz=0x00003000 (3 pages)
+ PDE[0] -> page table pa=0x0dee1000  flags=P W U
+    PTE[0] va=0x00000000 -> pa=0x0dee2000  flags=P W U
+    PTE[1] va=0x00001000 -> pa=0x0dee0000  flags=P W -   <-- stack guard page (P set, U clear)
+    PTE[2] va=0x00002000 -> pa=0x0dedf000  flags=P W U
+ kernel mappings (VA >= KERNBASE, not listed): 64 PDEs, 65536 PTEs
+ user summary: 1 PDEs, 3 PTEs present; user-accessible (U) pages=2, guard pages=1
+ check: sz/PGSIZE=3 - guard=1 => expected 2 accessible; found 2  -> MATCH
+
+######## 2. after sbrk(8 * 4096) ########
+vmprint: pid 3 (vmprinttest)  pgdir_pa=0x0df23000  sz=0x0000b000 (11 pages)
+ PDE[0] -> page table pa=0x0dee1000  flags=P W U
+    PTE[0] va=0x00000000 -> pa=0x0dee2000  flags=P W U
+    PTE[1] va=0x00001000 -> pa=0x0dee0000  flags=P W -   <-- stack guard page (P set, U clear)
+    PTE[2] va=0x00002000 -> pa=0x0dedf000  flags=P W U
+    PTE[3] va=0x00003000 -> pa=0x0dfbc000  flags=P W U
+    PTE[4] va=0x00004000 -> pa=0x0df76000  flags=P W U
+    PTE[5] va=0x00005000 -> pa=0x0dfbf000  flags=P W U
+    PTE[6] va=0x00006000 -> pa=0x0dfc0000  flags=P W U
+    PTE[7] va=0x00007000 -> pa=0x0dfc1000  flags=P W U
+    PTE[8] va=0x00008000 -> pa=0x0dfc2000  flags=P W U
+    PTE[9] va=0x00009000 -> pa=0x0dfc3000  flags=P W U
+    PTE[10] va=0x0000a000 -> pa=0x0dfc4000  flags=P W U
+ kernel mappings (VA >= KERNBASE, not listed): 64 PDEs, 65536 PTEs
+ user summary: 1 PDEs, 11 PTEs present; user-accessible (U) pages=10, guard pages=1
+ check: sz/PGSIZE=11 - guard=1 => expected 10 accessible; found 10  -> MATCH
+
+######## 3. after sbrk(-4096) ########
+vmprint: pid 3 (vmprinttest)  pgdir_pa=0x0df23000  sz=0x0000a000 (10 pages)
+ PDE[0] -> page table pa=0x0dee1000  flags=P W U
+    PTE[0] va=0x00000000 -> pa=0x0dee2000  flags=P W U
+    PTE[1] va=0x00001000 -> pa=0x0dee0000  flags=P W -   <-- stack guard page (P set, U clear)
+    PTE[2] va=0x00002000 -> pa=0x0dedf000  flags=P W U
+    PTE[3] va=0x00003000 -> pa=0x0dfbc000  flags=P W U
+    PTE[4] va=0x00004000 -> pa=0x0df76000  flags=P W U
+    PTE[5] va=0x00005000 -> pa=0x0dfbf000  flags=P W U
+    PTE[6] va=0x00006000 -> pa=0x0dfc0000  flags=P W U
+    PTE[7] va=0x00007000 -> pa=0x0dfc1000  flags=P W U
+    PTE[8] va=0x00008000 -> pa=0x0dfc2000  flags=P W U
+    PTE[9] va=0x00009000 -> pa=0x0dfc3000  flags=P W U
+ kernel mappings (VA >= KERNBASE, not listed): 64 PDEs, 65536 PTEs
+ user summary: 1 PDEs, 10 PTEs present; user-accessible (U) pages=9, guard pages=1
+ check: sz/PGSIZE=10 - guard=1 => expected 9 accessible; found 9  -> MATCH

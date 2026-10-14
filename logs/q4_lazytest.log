@@ -1,0 +1,91 @@
+init: starting sh
+$ lazytest
+==== Q4: lazytest (LAZY heap allocation) ====
+
+-- T1: sbrk(32 MB) must not allocate memory --
+[before sbrk]
+   free_pages=56788  user_pages(sz)=4  resident=4  user_pt=1
+[after sbrk(32MB), nothing touched]
+   free_pages=56788  user_pages(sz)=8196  resident=4  user_pt=1
+   PASS: free_pages unchanged by sbrk(32MB)
+   PASS: sz grew by 8192 pages
+   PASS: no new resident pages
+
+-- T2: touch 5 widely spaced pages --
+[after touching 5 pages]
+   free_pages=56779  user_pages(sz)=8196  resident=9  user_pt=5
+   PASS: exactly 5 pages became resident
+   PASS: free_pages dropped by 5 data pages + the new page-table pages
+   (page-table pages added: 4, because the pages lie in different 4 MB regions)
+   PASS: values written to the lazily mapped pages read back correctly
+
+-- T3: untouched page reads as zero --
+[after READING one untouched page]
+   free_pages=56777  user_pages(sz)=8196  resident=10  user_pt=6
+   PASS: byte read from untouched page is 0
+   PASS: the read faulted in exactly one frame
+
+-- T4: fork / exit with a sparse heap --
+[parent just before fork]
+   free_pages=56777  user_pages(sz)=8196  resident=10  user_pt=6
+   child: inherited data in touched pages: OK
+[child, after fork and one private write]
+   free_pages=56694  user_pages(sz)=8196  resident=11  user_pt=6
+[parent while child is alive]
+   free_pages=56694  user_pages(sz)=8196  resident=10  user_pt=6
+   fork consumed 83 frames (only touched pages were copied, not 8192)
+   PASS: fork of a 32MB lazy heap is cheap (<300 frames)
+[parent after child exited and was reaped]
+   free_pages=56777  user_pages(sz)=8196  resident=10  user_pt=6
+   PASS: free_pages back to the value before fork (no leak)
+   PASS: parent's page unaffected by child's write (isolation)
+[parent after that read (1 more page faulted in)]
+   free_pages=56776  user_pages(sz)=8196  resident=11  user_pt=6
+
+-- T5: system calls on untouched user buffers --
+[before syscalls]
+   free_pages=56776  user_pages(sz)=8196  resident=11  user_pt=6
+   PASS: write(pipe) from untouched buffer returned 64
+   PASS: read(pipe) into untouched buffer returned 64
+   PASS: read(file) into untouched buffer got README text
+   first bytes: NOTE: we have stopped maintaining the x8...
+   PASS: getmeminfo() filled a struct living in an untouched page
+[after syscalls]
+   free_pages=56771  user_pages(sz)=8196  resident=15  user_pt=7
+   resident pages added by the kernel on our behalf: 4
+
+-- T6: invalid accesses must kill only the offender --
+   child A: writing at address >= sz (0x2006000)
+pid 5 lazytest: segfault at 0x2006000 eip 0x549: address >= sz (beyond heap) -- kill proc
+   child B: writing into the stack guard page (0x2000)
+pid 6 lazytest: segfault at 0x2000 eip 0x508: protection violation (e.g. stack guard page) -- kill proc
+   child C: reading kernel address 0x80000000
+pid 7 lazytest: segfault at 0x80000000 eip 0x6b0: kernel address -- kill proc
+   parent still running after three killed children
+   PASS: kernel and parent survived all invalid accesses
+
+-- T7: shrinking gives back only frames that were allocated --
+[before sbrk(-32MB)]
+   free_pages=56771  user_pages(sz)=8196  resident=15  user_pt=7
+[after sbrk(-32MB)]
+   free_pages=56782  user_pages(sz)=4  resident=4  user_pt=7
+   frames returned: 11 (= resident pages dropped: 11); page-table pages stay until exit (user_pt=7)
+   PASS: every freed frame was a really-allocated page
+   PASS: sz is back to the pre-heap size
+   PASS: sbrk() refuses to shrink into the stack/guard page
+   child D: touching freed heap page after shrink (0xA04000)
+pid 8 lazytest: segfault at 0xa04000 eip 0x688: address >= sz (beyond heap) -- kill proc
+
+-- T8: out of physical memory during lazy allocation --
+[before OOM test]
+   free_pages=56782  user_pages(sz)=4  resident=4  user_pt=7
+   child: sbrk(400MB) returned OK; now touching every page...
+   child: touched 64 MB
+   child: touched 128 MB
+   child: touched 192 MB
+pid 9 lazytest: lazy alloc out of memory at 0xdd54000 -- kill proc
+[after OOM child was killed and reaped]
+   free_pages=56782  user_pages(sz)=4  resident=4  user_pt=7
+   PASS: all frames returned after the OOM-killed child was reaped
+
+==== lazytest summary: 20 passed, 0 failed ====
